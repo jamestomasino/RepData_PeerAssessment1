@@ -135,6 +135,7 @@ plot a time series.
 
 ```{r}
 time_series <- dat %>%
+    mutate(interval=parse_date_time(str_pad(interval, 4, pad="0"), "%H%M")) %>%
     group_by(interval) %>%
     summarize(steps=mean(steps, na.rm=TRUE))
 ```
