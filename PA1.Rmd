@@ -83,6 +83,28 @@ ggplot(steps_per_day, aes(date,steps), na.rm = TRUE) +
     scale_x_date(breaks = "1 day", labels=date_format("%d %B %y"))
 ```
 
+### Histogram of steps per day
+
+In addition to the literal number of steps per day, we can also look at a histogram of step intervals.
+
+```{r warning=F, fig.width=10, fig.height=6}
+ggplot(steps_per_day, aes(steps), na.rm = TRUE) +
+    geom_histogram(binwidth=1000, colour="deepskyblue1", fill="white") +
+    theme_solarized(light=FALSE) +
+    scale_colour_solarized("red") +
+    labs(x="Steps", y="Frequency", title="Histogram of Steps per Day") +
+    theme(plot.title=element_text(size=15, face="bold", vjust=2)) +
+    theme(legend.title=element_blank())
+```
+
+### Mean and Median
+
+With the *steps_per_day* table, calculating the mean and median values per day is a straight forward operation.
+
+```{r}
+mean(steps_per_day$steps, na.rm=TRUE)
+median(steps_per_day$steps, na.rm=TRUE)
+```
 
 ## What is the average daily activity pattern?
 
