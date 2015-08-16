@@ -180,6 +180,15 @@ paste(hour(max_interval),minute(max_interval),sep=&quot;:&quot;)</code></pre>
 </div>
 <div id="imputing-missing-values" class="section level2">
 <h2>Imputing missing values</h2>
+<div id="how-many-na-values" class="section level3">
+<h3>How many NA values</h3>
+<p>A number of the rows in this data set contain missing values. Looking row-wise at the entire data set, we can count how many have <em>NA</em> values and how many do not.</p>
+<pre class="r"><code>na_dat &lt;- dat[!complete.cases(dat),]
+complete_dat &lt;- dat[complete.cases(dat),]
+nrow(na_dat)</code></pre>
+<pre><code>## [1] 2304</code></pre>
+<pre class="r"><code>nrow(complete_dat)</code></pre>
+<pre><code>## [1] 15264</code></pre>
 <pre class="r"><code>max_row &lt;- time_series[which.max(time_series$steps),]
 max_interval &lt;- max_row$interval
 paste(hour(max_interval),minute(max_interval),sep=&quot;:&quot;)</code></pre>
@@ -190,6 +199,7 @@ paste(hour(max_interval),minute(max_interval),sep=&quot;:&quot;)</code></pre>
 #    select(steps, datetime)
 #
 #head(high_res_dat)</code></pre>
+</div>
 </div>
 <div id="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="section level2">
 <h2>Are there differences in activity patterns between weekdays and weekends?</h2>

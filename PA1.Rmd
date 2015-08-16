@@ -166,10 +166,44 @@ paste(hour(max_interval),minute(max_interval),sep=":")
 
 ## Imputing missing values
 
+### How many NA values
+
+A number of the rows in this data set contain missing values. Looking row-wise
+at the entire data set, we can count how many have *NA* values and how many do
+not.
+
 ```{r}
-max_row <- time_series[which.max(time_series$steps),]
-max_interval <- max_row$interval
-paste(hour(max_interval),minute(max_interval),sep=":")
+na_dat <- dat[!complete.cases(dat),]
+complete_dat <- dat[complete.cases(dat),]
+nrow(na_dat)
+nrow(complete_dat)
+```
+
+### Filling in the gaps
+
+We can attempt to infer the values of the NA positions by leveraging the mean
+step count for that 5-minute interval and inserting that value in place of the
+NA.
+
+```{r}
+dat_fill <- dat %>%
+    mutate(interval=parse_date_time(str_pad(interval, 4, pad="0"), "%H%M")) %>%
+    rowwise() %>%
+    mutate(steps_filled = ifelse(is.na(steps), 0, steps))
+
+head(dat_fill)
+```
+3. Create a new dataset that is equal to the original dataset but with the
+   missing data filled in.
+
+4. Make a histogram of the total number of steps taken each day and Calculate
+   and report the mean and median total number of steps taken per day. Do these
+   values differ from the estimates from the first part of the assignment? What
+   is the impact of imputing missing data on the estimates of the total daily
+   number of steps?
+
+
+```{r}
 #high_res_dat <- dat %>%
 #    mutate(interval=str_pad(interval, 4, pad="0")) %>%
 #    mutate(datetime=parse_date_time(paste(date, interval), "%Y-%m-%d %H%M")) %>%
