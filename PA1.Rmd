@@ -8,7 +8,8 @@ output:
 
 ## Preparing the environment
 
-The libraries that are used throughout this R Markdown file are installed if necessary and then loaded by use of the following dependency function.
+The libraries that are used throughout this R Markdown file are installed if
+necessary and then loaded by use of the following dependency function.
 
 ```{r results="hide", warning=F, message=F}
 depend <- function (s) {
@@ -21,25 +22,25 @@ depend <- function (s) {
 
 ## Loading and preprocessing the data
 
-We'll read the raw data set directly, taking care to preserve headers and format *NA* values. Date's can be tricky when imported, so we'll force the *date* column to be interpretted as a date.
+We'll read the raw data set directly, taking care to preserve headers and
+format *NA* values. Date's can be tricky when imported, so we'll force the
+*date* column to be interpretted as a date.
 
 ```{r, cache=T}
-dat <- read.table(unz("activity.zip", "activity.csv"), na.strings = "NA", header=T, quote="\"", sep=",")
+dat <- read.table(unz("activity.zip", "activity.csv"),
+                  na.strings = "NA", header=T, quote="\"", sep=",")
 dat$date <- as.Date(dat$date)
 ```
 
-Inspecting the data shows well formated column names as well as good data for the *date* and *interval* columns.
+Inspecting the data shows well formated column names as well as good data for
+the *date* and *interval* columns.
 
 ```{r, cache=T}
 head(dat)
 ```
-Inspecting the end of the table shows that the *interval* column continues to count through the entire period. It does not start again each day.
 
-```{r, cache=T}
-tail(dat)
-```
-
-A quick sum shows that there is good data further down in the *steps* column as well.
+A quick sum shows that there is good data further down in the *steps* column as
+well.
 
 ```{r}
 sum(dat$steps,na.rm=TRUE)
@@ -49,7 +50,9 @@ sum(dat$steps,na.rm=TRUE)
 
 ### Libraries
 
-We'll be using the *ggplot2* library for all plots. The *scales* library helps us with breaks and graph limiting, and *ggthemes* brings us a wonderful collection of colors.
+We'll be using the *ggplot2* library for all plots. The *scales* library helps
+us with breaks and graph limiting, and *ggthemes* brings us a wonderful
+collection of colors.
 
 Tidying the data will be done by with the *dplyr* library and *magrittr* piping.
 
@@ -62,13 +65,15 @@ depend("dplyr")
 
 ### Steps per day
 
-To calculate the number of steps per day, we group all of our data by each day and take the sum of each group. The result table can be used to draw a plot for each day.
+To calculate the number of steps per day, we group all of our data by each day
+and take the sum of each group. The result table can be used to draw a plot for
+each day.
 
 ```{r}
 steps_per_day <- dat %>%
-    select( steps, date ) %>%
-    group_by( date) %>%
-    summarize ( steps=sum(steps) )
+    select(steps, date) %>%
+    group_by(date) %>%
+    summarize(steps=sum(steps))
 ```
 
 ```{r warning=F, fig.width=10, fig.height=6}
@@ -85,7 +90,9 @@ ggplot(steps_per_day, aes(date,steps), na.rm = TRUE) +
 
 ### Histogram of steps per day
 
-In addition to the literal number of steps per day, we can also look at a histogram of step intervals to identify the shape of the data and the likelihood of outliers.
+In addition to the literal number of steps per day, we can also look at a
+histogram of step intervals to identify the shape of the data and the
+likelihood of outliers.
 
 ```{r warning=F, fig.width=10, fig.height=6}
 ggplot(steps_per_day, aes(steps)) +
@@ -99,7 +106,8 @@ ggplot(steps_per_day, aes(steps)) +
 
 ### Mean and Median
 
-With the *steps_per_day* table, calculating the mean and median values per day is a straight forward operation.
+With the *steps_per_day* table, calculating the mean and median values per day
+is a straight forward operation.
 
 ```{r}
 mean(steps_per_day$steps, na.rm=TRUE)
@@ -108,9 +116,49 @@ median(steps_per_day$steps, na.rm=TRUE)
 
 ## What is the average daily activity pattern?
 
+### Libraries
 
+To better access date-time information from the tables, we will use the
+*lubridate* library. To facilitate the tidy step, *stringr* will give the
+ability to pad a numeric string, helpful in the time transformation below.
+
+```{r results="hide", warning=F, message=F}
+depend("lubridate")
+depend("stringr")
+```
+
+### Time Series
+
+The *interval* column is really nothing more than a badly formatted time
+column. By grouping by that column and taking the average of the steps, we can
+plot a time series.
+
+```{r}
+time_series <- dat %>%
+    group_by(interval) %>%
+    summarize(steps=mean(steps, na.rm=TRUE))
+```
+```{r warning=F, fig.width=10, fig.height=6}
+ggplot(time_series, aes(interval,steps)) +
+    geom_line(colour="white") +
+    theme_solarized(light=FALSE) +
+    scale_colour_solarized("red") +
+    labs(x="Date", y="Steps", title="Number of Steps During Day") +
+    theme(plot.title=element_text(size=15, face="bold", vjust=2)) +
+    theme(legend.title=element_blank()) +
+    theme(axis.text.x=element_text(angle=50, size=5, vjust=0.5))
+```
 
 ## Imputing missing values
+
+```{r}
+#high_res_dat <- dat %>%
+#    mutate(interval=str_pad(interval, 4, pad="0")) %>%
+#    mutate(datetime=parse_date_time(paste(date, interval), "%Y-%m-%d %H%M")) %>%
+#    select(steps, datetime)
+#
+#head(high_res_dat)
+```
 
 
 
