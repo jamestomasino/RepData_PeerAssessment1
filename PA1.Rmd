@@ -78,8 +78,8 @@ steps_per_day <- dat %>%
 
 ```{r warning=F, fig.width=10, fig.height=6}
 ggplot(steps_per_day, aes(date,steps), na.rm = TRUE) +
-    geom_point(colour="white", size=1) +
-    theme_solarized(light=FALSE) +
+    geom_point(size=2, color="#099DD9") +
+    theme_solarized() +
     scale_colour_solarized("red") +
     labs(x="Date", y="Steps", title="Number of Steps per Day") +
     theme(plot.title=element_text(size=15, face="bold", vjust=2)) +
@@ -96,9 +96,8 @@ likelihood of outliers.
 
 ```{r warning=F, fig.width=10, fig.height=6}
 ggplot(steps_per_day, aes(steps)) +
-    geom_histogram(binwidth=1000, colour="deepskyblue1", fill="white") +
-    theme_solarized(light=FALSE) +
-    scale_colour_solarized("red") +
+    geom_histogram(binwidth=500, color = "black", fill = "#099DD9") +
+    theme_solarized() +
     labs(x="Steps", y="Frequency", title="Histogram of Steps per Day") +
     theme(plot.title=element_text(size=15, face="bold", vjust=2)) +
     theme(legend.title=element_blank())
@@ -141,19 +140,36 @@ time_series <- dat %>%
 ```
 ```{r warning=F, fig.width=10, fig.height=6}
 ggplot(time_series, aes(interval,steps)) +
-    geom_line(colour="white") +
-    theme_solarized(light=FALSE) +
+    geom_line(color="#099DD9") +
+    theme_solarized() +
     scale_colour_solarized("red") +
-    labs(x="Date", y="Steps", title="Number of Steps During Day") +
+    labs(x="Time", y="Steps", title="Average Number of Steps During Day") +
     theme(plot.title=element_text(size=15, face="bold", vjust=2)) +
     theme(legend.title=element_blank()) +
     theme(axis.text.x=element_text(angle=50, size=5, vjust=0.5)) +
     scale_x_datetime(breaks = "60 min", labels=date_format("%H %M"))
 ```
 
+### Highest average 5-minute interval
+
+Looking at the graph, it is easy to estimate the highest peak falling slightly
+after 8:30am. We can get a more accurate picture by looking for the row with
+the maximum step value, then formatting the time interval to be human readible.
+
+```{r}
+max_row <- time_series[which.max(time_series$steps),]
+max_interval <- max_row$interval
+paste(hour(max_interval),minute(max_interval),sep=":")
+```
+
+8:35am matches the graph expectations.
+
 ## Imputing missing values
 
 ```{r}
+max_row <- time_series[which.max(time_series$steps),]
+max_interval <- max_row$interval
+paste(hour(max_interval),minute(max_interval),sep=":")
 #high_res_dat <- dat %>%
 #    mutate(interval=str_pad(interval, 4, pad="0")) %>%
 #    mutate(datetime=parse_date_time(paste(date, interval), "%Y-%m-%d %H%M")) %>%
