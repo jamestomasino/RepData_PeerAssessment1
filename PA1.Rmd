@@ -6,15 +6,75 @@ output:
     theme: united
 ---
 
+## Preparing the environment
+
+The libraries that are used throughout this R Markdown file are installed if necessary and then loaded by use of the following dependency function.
+
+```{r results="hide", warning=F, message=F}
+depend <- function (s) {
+	if (s %in% rownames(installed.packages()) == FALSE) {
+		install.packages(s, repos="http://cran.rstudio.com/", dependencies=TRUE)
+	}
+	library(s, character.only=TRUE)
+}
+```
 
 ## Loading and preprocessing the data
 
-```{r}
+```{r results="hide", warning=F, message=F}
+depend("dplyr")
+depend("lubridate")
+```
 
+### Loading the data set
+
+We'll read the raw data set directly, taking care to preserve headers and format NA values.
+
+```{r, cache=T}
+dat <- read.table(unz("activity.zip", "activity.csv"), na.strings = "NA", header=T, quote="\"", sep=",")
+dat$date <- as.Date(dat$date)
+```
+
+Inspecting the data shows well formated column names as well as good data for the date and interval columns.
+
+```{r, cache=T}
+head(dat)
+```
+Inspecting the end of the table shows that the interval column continues to count through the entire period. It does not start again each day.
+
+```{r, cache=T}
+tail(dat)
+```
+
+A quick sum shows that there is good data further down in the steps column as well.
+
+```{r}
+sum(dat$steps,na.rm=TRUE)
 ```
 
 ## What is mean total number of steps taken per day?
 
+### Libraries
+
+We'll be using the ggplot2 library for all plots. Scales library helps us with breaks and graph limiting, and ggthemes brings us a wonderful collection of colors.
+
+```{r results="hide", warning=F, message=F}
+depend("ggplot2")
+depend("scales")
+depend("ggthemes")
+```
+
+```{r fig.width=10, fig.height=6}
+ggplot(dat, aes(x=date, y=steps)) +
+    geom_histogram() +
+    theme_solarized(light=FALSE) +
+    scale_colour_solarized("red") +
+    labs(x="Date", y="Steps", title="Histogram of Steps per Day") +
+    theme(plot.title=element_text(size=15, face="bold", vjust=2)) +
+    theme(legend.title=element_blank()) +
+    theme(axis.text.x=element_text(angle=50, size=5, vjust=0.5)) +
+    scale_x_date(breaks = "1 day", labels=date_format("%d %B %y"))
+```
 
 
 ## What is the average daily activity pattern?
