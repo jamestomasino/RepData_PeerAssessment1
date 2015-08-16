@@ -88,7 +88,7 @@ ggplot(steps_per_day, aes(date,steps), na.rm = TRUE) +
 In addition to the literal number of steps per day, we can also look at a histogram of step intervals.
 
 ```{r warning=F, fig.width=10, fig.height=6}
-ggplot(steps_per_day, aes(steps), na.rm = TRUE) +
+ggplot(steps_per_day, aes(steps)) +
     geom_histogram(binwidth=1000, colour="deepskyblue1", fill="white") +
     theme_solarized(light=FALSE) +
     scale_colour_solarized("red") +
